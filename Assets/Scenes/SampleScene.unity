@@ -458,10 +458,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xCount: 9
-  yCount: 16
-  mineCount: 15
-  chunckUp: {fileID: 4929163184760006104, guid: c683f5b65e52a2d45aa6aecff2ad476d,
+  yCount: 9
+  mineCount: 10
+  chunkUp: {fileID: 6103244465423175755, guid: 87d4b06bac922954b8ffbc042d8b39fa, type: 3}
+  chunkDown: {fileID: 4929163184760006104, guid: c683f5b65e52a2d45aa6aecff2ad476d,
     type: 3}
+  rectTransformPanel: {fileID: 2097656379}
+  margin: 10
 --- !u!114 &2097656383
 MonoBehaviour:
   m_ObjectHideFlags: 0
