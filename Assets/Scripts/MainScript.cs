@@ -5,7 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
-{ 
+{
+    bool endGame = false;
+
     [SerializeField] int xCount = 9;
     [SerializeField] int yCount = 9;
     [SerializeField] int mineCount = 15;
@@ -162,6 +164,17 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (pressing)
         {           
             OpenChunk(i, j);
+            if (grid[i, j] < 0)
+            {
+                for (int x = 0; x < xCount; x++)
+                {
+                    for (int y = 0; y < yCount; y++)
+                    {
+                        if (grid[x, y] < 0)
+                            chunksUp[x, y].SetActive(false);
+                    }
+                }
+            }
             Debug.Log("[" + i + ", " + j + "]");
         }
     }
