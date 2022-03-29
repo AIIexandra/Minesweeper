@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class MainScript : MonoBehaviour
+public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 { 
     [SerializeField] int xCount = 9;
     [SerializeField] int yCount = 9;
@@ -16,28 +16,38 @@ public class MainScript : MonoBehaviour
     GameObject[,] chunksUp;
     GameObject[,] chunksDown;
 
+    //размеры панели
     [SerializeField] RectTransform rectTransformPanel;
     [SerializeField] int margin = 10;
     float widthPanel;
     float heightPanel;
+    float topMargin;
+    float leftMardin;
+
+    //обработка длительного нажатия
+    bool pressing = false;
+    float clickTime = 0.3f;
+    float totalClickTime = 0;
+    //координаты нажатия
+    int iClick;
+    int jClick;
 
     void Start()
     {
         //размеры панели
         //rectTransformPanel = panel.GetComponent<RectTransform>();
 
-        float top = (Screen.height - Screen.width) * 0.5f + margin;
-        float left = margin;
-        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0.0f, 1060);
-        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0.0f, 1060);
-        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0.0f, 1060);
-        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Right, 0.0f, 1060);
+        topMargin = (Screen.height - Screen.width) * 0.5f + margin;
+        leftMardin = margin;
+        heightPanel = Screen.height - topMargin * 2;
+        widthPanel = Screen.width - leftMardin * 2;
+
+        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top, 0.0f, heightPanel);
+        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0.0f, heightPanel);
+        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0.0f, widthPanel);
+        rectTransformPanel.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Right, 0.0f, widthPanel);
 
         rectTransformPanel.localPosition = new Vector2(0, 0);
-
-        heightPanel = Screen.height - top * 2;
-        widthPanel = Screen.width - left * 2;
-        Debug.Log("высота: " + heightPanel + ", ширина: " + widthPanel);
 
         //генерация ячеек
         grid = new int[xCount, yCount];
@@ -124,15 +134,6 @@ public class MainScript : MonoBehaviour
         }
     }
 
-    public void OnPointerDown(BaseEventData data)
-    {
-        PointerEventData pointerEventData = (PointerEventData)data;
-        int i = (int)((pointerEventData.position.x / widthPanel * xCount));
-        int j = (int)((pointerEventData.position.y - 430) / heightPanel * yCount);
-        OpenChunk(i, j);
-        Debug.Log("[" + i + ", " + j + "]");
-    }
-
     void OpenChunk(int i, int j)
     {
         if (chunksUp[i, j].activeSelf)
@@ -153,30 +154,57 @@ public class MainScript : MonoBehaviour
         }
     }
 
-    public void onPress(BaseEventData data)
+    public void OnPointerUp(PointerEventData pointerEventData)
     {
-        PointerEventData pointerEventData = (PointerEventData)data;
         int i = (int)((pointerEventData.position.x / widthPanel * xCount));
-        int j = (int)((pointerEventData.position.y - 430) / heightPanel * yCount);
+        int j = (int)((pointerEventData.position.y - topMargin) / heightPanel * yCount);
 
-        RectTransform rt = chunksUp[i, j].GetComponent<RectTransform>();
-        Image flag = rt.GetChild(0).GetComponent<Image>();
-        Image question = rt.GetChild(1).GetComponent<Image>();
-
-        if (!flag.enabled && !question.enabled)
-        {
-            flag.enabled = true;
+        if (pressing)
+        {           
+            OpenChunk(i, j);
+            Debug.Log("[" + i + ", " + j + "]");
         }
+    }
 
-        else if (flag.enabled)
+    public void OnPointerDown(PointerEventData pointerEventData)
+    {
+        iClick = (int)((pointerEventData.position.x / widthPanel * xCount));
+        jClick = (int)((pointerEventData.position.y - topMargin) / heightPanel * yCount);
+
+        pressing = true;
+        totalClickTime = 0;
+    }
+
+    void Update()
+    {
+        if (pressing)
         {
-            flag.enabled = false;
-            question.enabled = true;
-        }
-        else
-        {
-            flag.enabled = false;
-            question.enabled = false;
+            totalClickTime += Time.deltaTime;
+
+            if (totalClickTime >= clickTime)
+            {
+                pressing = false;
+
+                RectTransform rt = chunksUp[iClick, jClick].GetComponent<RectTransform>();
+                Image flag = rt.GetChild(0).GetComponent<Image>();
+                Image question = rt.GetChild(1).GetComponent<Image>();
+
+                if (!flag.enabled && !question.enabled)
+                {
+                    flag.enabled = true;
+                }
+
+                else if (flag.enabled)
+                {
+                    flag.enabled = false;
+                    question.enabled = true;
+                }
+                else
+                {
+                    flag.enabled = false;
+                    question.enabled = false;
+                }
+            }
         }
     }
 }
