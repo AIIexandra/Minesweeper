@@ -6,19 +6,30 @@ using UnityEngine.EventSystems;
 
 public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-    bool endGame = false;
+    int endGame = 0;    //1 - проигрыш, 2 - выигрыш
 
     [SerializeField] int xCount = 9;
     [SerializeField] int yCount = 9;
     [SerializeField] int mineCount = 15;
     [SerializeField] GameObject chunkUp;
     [SerializeField] GameObject chunkDown;
-    
+
     int[,] grid;
     GameObject[,] chunksUp;
     GameObject[,] chunksDown;
 
+    int mineCorrectCount = 0;
+
+    //Таймер
+    [SerializeField] Text textMineRemCount;
+    int mineRemCount;
+    [SerializeField] Text textTime;
+    float time;
+    bool timeRun = true;
+
     //размеры панели
+    [SerializeField] GameObject panelLoss;
+    [SerializeField] GameObject panelWin;
     [SerializeField] RectTransform rectTransformPanel;
     [SerializeField] int margin = 10;
     float widthPanel;
@@ -30,12 +41,20 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     bool pressing = false;
     float clickTime = 0.3f;
     float totalClickTime = 0;
+
     //координаты нажатия
     int iClick;
     int jClick;
 
     void Start()
     {
+        mineRemCount = mineCount;
+        textMineRemCount.text = mineRemCount.ToString();
+        textTime.text = time.ToString("F2");
+
+        panelLoss.SetActive(false);
+        panelWin.SetActive(false);
+
         //размеры панели
         //rectTransformPanel = panel.GetComponent<RectTransform>();
 
@@ -70,7 +89,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             int i = Random.Range(0, xCount);
             int j = Random.Range(0, yCount);
 
-            if(grid[i, j] >= 0)
+            if (grid[i, j] >= 0)
             {
                 grid[i, j] = -10;
 
@@ -102,8 +121,8 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                 Text chunckText = rt.GetChild(0).GetComponent<Text>();
                 Image mine = rt.GetChild(1).GetComponent<Image>();
 
-                if (grid[i, j] == 0) 
-                { 
+                if (grid[i, j] == 0)
+                {
                     chunckText.text = "";
                     mine.enabled = false;
                 }
@@ -156,29 +175,6 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         }
     }
 
-    public void OnPointerUp(PointerEventData pointerEventData)
-    {
-        int i = (int)((pointerEventData.position.x / widthPanel * xCount));
-        int j = (int)((pointerEventData.position.y - topMargin) / heightPanel * yCount);
-
-        if (pressing)
-        {           
-            OpenChunk(i, j);
-            if (grid[i, j] < 0)
-            {
-                for (int x = 0; x < xCount; x++)
-                {
-                    for (int y = 0; y < yCount; y++)
-                    {
-                        if (grid[x, y] < 0)
-                            chunksUp[x, y].SetActive(false);
-                    }
-                }
-            }
-            Debug.Log("[" + i + ", " + j + "]");
-        }
-    }
-
     public void OnPointerDown(PointerEventData pointerEventData)
     {
         iClick = (int)((pointerEventData.position.x / widthPanel * xCount));
@@ -188,13 +184,32 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         totalClickTime = 0;
     }
 
+    public void OnPointerUp(PointerEventData pointerEventData)
+    {
+        if (pressing)
+        {
+            OpenChunk(iClick, jClick);
+            if (grid[iClick, jClick] < 0)
+            {
+                endGame = 1;
+                Finish();
+            }
+        }
+    }
+
     void Update()
     {
+        if (timeRun)
+        {
+            time += Time.deltaTime;
+            textTime.text = time.ToString("F2");
+        }
+
         if (pressing)
         {
             totalClickTime += Time.deltaTime;
 
-            if (totalClickTime >= clickTime)
+            if (totalClickTime >= clickTime && chunksUp[iClick, jClick].activeSelf)
             {
                 pressing = false;
 
@@ -205,12 +220,32 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                 if (!flag.enabled && !question.enabled)
                 {
                     flag.enabled = true;
+                    mineRemCount--;
+                    textMineRemCount.text = mineRemCount.ToString();
+
+                    if(grid[iClick, jClick] < 0)
+                    {
+                        mineCorrectCount++;
+
+                        if (mineCorrectCount == mineCount)
+                        {
+                            endGame = 2;
+                            Finish();
+                        }
+                    }
                 }
 
                 else if (flag.enabled)
                 {
                     flag.enabled = false;
                     question.enabled = true;
+                    mineRemCount++;
+                    textMineRemCount.text = mineRemCount.ToString();
+
+                    if (grid[iClick, jClick] < 0)
+                    {
+                        mineCorrectCount--;
+                    }
                 }
                 else
                 {
@@ -218,6 +253,31 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     question.enabled = false;
                 }
             }
+        }
+    }
+
+    void Finish()
+    {
+        timeRun = false;
+
+        if (endGame == 2)   //выигрыш
+        {
+            panelWin.SetActive(true);
+        }
+
+        else if (endGame == 1)  //проигрыш
+        {
+            for (int i = 0; i < xCount; i++)
+            {
+                for (int j = 0; j < yCount; j++)
+                {
+                    if (grid[i, j] < 0)
+                        chunksUp[i, j].SetActive(false);
+                }
+            }
+
+            panelLoss.SetActive(true);
+            Debug.Log("Loss");
         }
     }
 }
