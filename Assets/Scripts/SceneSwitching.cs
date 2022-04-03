@@ -5,9 +5,28 @@ using UnityEngine.SceneManagement;
 
 public class SceneSwitching : MonoBehaviour
 {
-    public void ToGame()
+    public static int xCount = 9;
+    public static int minesCount = 10;
+
+    public void ToSimpleGame()
     {
         SceneManager.LoadSceneAsync("GameScene");
+        xCount = 9;
+        minesCount = 10;
+    }
+
+    public void ToNormalGame()
+    {
+        SceneManager.LoadSceneAsync("GameScene");
+        xCount = 15;
+        minesCount = 35;
+    }
+
+    public void ToHardGame()
+    {
+        SceneManager.LoadSceneAsync("GameScene");
+        xCount = 15;
+        minesCount = 50;
     }
 
     public void ToSelectLevel()

@@ -360,7 +360,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1579366233}
-        m_MethodName: ToGame
+        m_MethodName: ToSimpleGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -556,7 +556,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1579366233}
-        m_MethodName: ToGame
+        m_MethodName: ToHardGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -764,7 +764,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1579366233}
-        m_MethodName: ToGame
+        m_MethodName: ToNormalGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

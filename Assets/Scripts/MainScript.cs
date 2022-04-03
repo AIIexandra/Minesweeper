@@ -48,16 +48,20 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     void Start()
     {
-        mineRemCount = mineCount;
-        textMineRemCount.text = mineRemCount.ToString();
-        textTime.text = time.ToString("F2");
+        //сложность уровня
+        xCount = yCount = SceneSwitching.xCount;
+        mineCount = SceneSwitching.minesCount;
 
+        //UI
+        mineRemCount = SceneSwitching.minesCount;
+        textMineRemCount.text = mineRemCount.ToString();
+        textTime.text = Mathf.RoundToInt(time).ToString();
+
+        //Отключить панели выигрыша и проигрыша
         panelLoss.SetActive(false);
         panelWin.SetActive(false);
 
         //размеры панели
-        //rectTransformPanel = panel.GetComponent<RectTransform>();
-
         topMargin = (Screen.height - Screen.width) * 0.5f + margin;
         leftMardin = margin;
         heightPanel = Screen.height - topMargin * 2;
@@ -70,7 +74,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
         rectTransformPanel.localPosition = new Vector2(0, 0);
 
-        //генерация ячеек
+        //создание поля
         grid = new int[xCount, yCount];
         chunksDown = new GameObject[xCount, yCount];
         chunksUp = new GameObject[xCount, yCount];
@@ -83,6 +87,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             }
         }
 
+        //установка мин и цифр
         int m = mineCount;
         while (m > 0)
         {
@@ -106,6 +111,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
             }
         }
 
+        //генерация ячеек
         for (int i = 0; i < xCount; i++)
         {
             for (int j = 0; j < yCount; j++)
@@ -113,7 +119,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                 chunksDown[i, j] = Instantiate(chunkDown, Vector3.zero, Quaternion.identity, transform);
                 RectTransform rt = chunksDown[i, j].GetComponent<RectTransform>();
 
-                rt.anchorMin = new Vector2(i * 1.0f / xCount, j * 1.0f / yCount);
+                rt.anchorMin = new Vector2((i * 1.0f / xCount), j * 1.0f / yCount);
                 rt.anchorMax = new Vector2((i + 1) * 1.0f / xCount, (j + 1) * 1.0f / yCount);
                 rt.offsetMin = Vector2.zero;
                 rt.offsetMax = Vector2.zero;
@@ -121,19 +127,19 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                 Text chunckText = rt.GetChild(0).GetComponent<Text>();
                 Image mine = rt.GetChild(1).GetComponent<Image>();
 
-                if (grid[i, j] == 0)
+                if (grid[i, j] == 0)   //пусто
                 {
                     chunckText.text = "";
                     mine.enabled = false;
                 }
 
-                if (grid[i, j] < 0)
+                if (grid[i, j] < 0)  //мина
                 {
                     chunckText.text = "";
                     mine.enabled = true;
                 }
 
-                if (grid[i, j] > 0)
+                if (grid[i, j] > 0)    //цифра
                 {
                     chunckText.text = grid[i, j].ToString();
                     mine.enabled = false;
@@ -177,15 +183,18 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData pointerEventData)
     {
+        //Получить координаты клика
         iClick = (int)((pointerEventData.position.x / widthPanel * xCount));
         jClick = (int)((pointerEventData.position.y - topMargin) / heightPanel * yCount);
 
+        //Активировать длительное нажатие
         pressing = true;
         totalClickTime = 0;
     }
 
     public void OnPointerUp(PointerEventData pointerEventData)
     {
+        //если при отпускании не было деактивировано длительное нажатие, значит оно обычное
         if (pressing)
         {
             OpenChunk(iClick, jClick);
@@ -202,7 +211,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (timeRun)
         {
             time += Time.deltaTime;
-            textTime.text = time.ToString("F2");
+            textTime.text = Mathf.RoundToInt(time).ToString();
         }
 
         if (pressing)
@@ -211,13 +220,13 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
             if (totalClickTime >= clickTime && chunksUp[iClick, jClick].activeSelf)
             {
-                pressing = false;
+                pressing = false;   //деактивация длительного нажатия
 
                 RectTransform rt = chunksUp[iClick, jClick].GetComponent<RectTransform>();
                 Image flag = rt.GetChild(0).GetComponent<Image>();
                 Image question = rt.GetChild(1).GetComponent<Image>();
 
-                if (!flag.enabled && !question.enabled)
+                if (!flag.enabled && !question.enabled)    //Поставить флаг, уменьшить количество мин
                 {
                     flag.enabled = true;
                     mineRemCount--;
@@ -234,8 +243,8 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                         }
                     }
                 }
-
-                else if (flag.enabled)
+                 
+                else if (flag.enabled)   //Убрать флаг, поставить вопрос, увелисить количество мин
                 {
                     flag.enabled = false;
                     question.enabled = true;
@@ -247,7 +256,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                         mineCorrectCount--;
                     }
                 }
-                else
+                else   //Убрать вопрос
                 {
                     flag.enabled = false;
                     question.enabled = false;
