@@ -232,7 +232,9 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     mineRemCount--;
                     textMineRemCount.text = mineRemCount.ToString();
 
-                    if(grid[iClick, jClick] < 0)
+                    Handheld.Vibrate();
+
+                    if (grid[iClick, jClick] < 0)
                     {
                         mineCorrectCount++;
 
@@ -251,6 +253,8 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     mineRemCount++;
                     textMineRemCount.text = mineRemCount.ToString();
 
+                    Handheld.Vibrate();
+
                     if (grid[iClick, jClick] < 0)
                     {
                         mineCorrectCount--;
@@ -260,6 +264,8 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                 {
                     flag.enabled = false;
                     question.enabled = false;
+
+                    Handheld.Vibrate();
                 }
             }
         }
