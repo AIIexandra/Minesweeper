@@ -10,7 +10,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     [SerializeField] int xCount = 9;
     [SerializeField] int yCount = 9;
-    [SerializeField] int mineCount = 15;
+    [SerializeField] int minesCount = 15;
     [SerializeField] GameObject chunkUp;
     [SerializeField] GameObject chunkDown;
 
@@ -25,7 +25,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     int mineRemCount;
     [SerializeField] Text textTime;
     float time;
-    bool timeRun = true;
+    public static bool timeRun = true;
 
     //размеры панели
     [SerializeField] GameObject panelLoss;
@@ -48,14 +48,17 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     void Start()
     {
+        //запуск таймера
+        timeRun = true;
+        textTime.text = Mathf.RoundToInt(time).ToString();
+
         //сложность уровня
         xCount = yCount = SceneSwitching.xCount;
-        mineCount = SceneSwitching.minesCount;
+        minesCount = SceneSwitching.minesCount;
 
-        //UI
+        //UI количество мин
         mineRemCount = SceneSwitching.minesCount;
         textMineRemCount.text = mineRemCount.ToString();
-        textTime.text = Mathf.RoundToInt(time).ToString();
 
         //Отключить панели выигрыша и проигрыша
         panelLoss.SetActive(false);
@@ -88,7 +91,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         }
 
         //установка мин и цифр
-        int m = mineCount;
+        int m = minesCount;
         while (m > 0)
         {
             int i = Random.Range(0, xCount);
@@ -238,7 +241,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     {
                         mineCorrectCount++;
 
-                        if (mineCorrectCount == mineCount)
+                        if (mineCorrectCount == minesCount)
                         {
                             endGame = 2;
                             Finish();
@@ -278,6 +281,19 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (endGame == 2)   //выигрыш
         {
             panelWin.SetActive(true);
+
+            if (minesCount == 10)
+            {
+                PlayerPrefs.SetString("SimpleRecord", time.ToString("F2"));
+            }
+            else if (minesCount == 35)
+            {
+                PlayerPrefs.SetString("NormalRecord", time.ToString("F2"));
+            }
+            else if (minesCount == 50)
+            {
+                PlayerPrefs.SetString("HardRecord", time.ToString("F2"));
+            }
         }
 
         else if (endGame == 1)  //проигрыш

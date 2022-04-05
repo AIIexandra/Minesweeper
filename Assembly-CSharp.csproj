@@ -64,7 +64,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\LoadRecordsScript.cs" />
     <Compile Include="Assets\Scripts\MainScript.cs" />
+    <Compile Include="Assets\Scripts\PauseScript.cs" />
     <Compile Include="Assets\Scripts\SceneSwitching.cs" />
     <Reference Include="UnityEngine">
       <HintPath>H:/Unity/2019.4.27f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

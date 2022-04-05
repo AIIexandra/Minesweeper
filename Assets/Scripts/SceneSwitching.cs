@@ -44,8 +44,8 @@ public class SceneSwitching : MonoBehaviour
         SceneManager.LoadSceneAsync("RulesScene");
     }
 
-    public void ToSituations()
+    public void ToRecords()
     {
-        SceneManager.LoadSceneAsync("SituationsScene");
+        SceneManager.LoadSceneAsync("RecordsScene");
     }
 }
