@@ -42,6 +42,8 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
     float clickTime = 0.3f;
     float totalClickTime = 0;
 
+    //[SerializeField] int vibroTime = 200;
+
     //координаты нажатия
     int iClick;
     int jClick;
@@ -235,7 +237,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     mineRemCount--;
                     textMineRemCount.text = mineRemCount.ToString();
 
-                    Handheld.Vibrate();
+                    //Handheld.Vibrate();
 
                     if (grid[iClick, jClick] < 0)
                     {
@@ -256,7 +258,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     mineRemCount++;
                     textMineRemCount.text = mineRemCount.ToString();
 
-                    Handheld.Vibrate();
+                    //Handheld.Vibrate();
 
                     if (grid[iClick, jClick] < 0)
                     {
@@ -268,7 +270,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     flag.enabled = false;
                     question.enabled = false;
 
-                    Handheld.Vibrate();
+                    //Handheld.Vibrate();
                 }
             }
         }
@@ -282,15 +284,15 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         {
             panelWin.SetActive(true);
 
-            if (minesCount == 10)
+            if (SceneSwitching.minesCount == 10)
             {
                 PlayerPrefs.SetString("SimpleRecord", time.ToString("F2"));
             }
-            else if (minesCount == 35)
+            else if (SceneSwitching.minesCount == 35)
             {
                 PlayerPrefs.SetString("NormalRecord", time.ToString("F2"));
             }
-            else if (minesCount == 50)
+            else if (SceneSwitching.minesCount == 50)
             {
                 PlayerPrefs.SetString("HardRecord", time.ToString("F2"));
             }
