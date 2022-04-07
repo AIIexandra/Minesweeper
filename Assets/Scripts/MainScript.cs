@@ -6,8 +6,6 @@ using UnityEngine.EventSystems;
 
 public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-    int endGame = 0;    //1 - проигрыш, 2 - выигрыш
-
     [SerializeField] int xCount = 9;
     [SerializeField] int yCount = 9;
     [SerializeField] int minesCount = 15;
@@ -203,11 +201,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         if (pressing)
         {
             OpenChunk(iClick, jClick);
-            if (grid[iClick, jClick] < 0)
-            {
-                endGame = 1;
-                Finish();
-            }
+            if (grid[iClick, jClick] < 0) Finish(1);
         }
     }
 
@@ -242,12 +236,7 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
                     if (grid[iClick, jClick] < 0)
                     {
                         mineCorrectCount++;
-
-                        if (mineCorrectCount == minesCount)
-                        {
-                            endGame = 2;
-                            Finish();
-                        }
+                        if (mineCorrectCount == minesCount) Finish(2);
                     }
                 }
                  
@@ -276,29 +265,29 @@ public class MainScript : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
         }
     }
 
-    void Finish()
+    void Finish(int typeEndGame)
     {
         timeRun = false;
 
-        if (endGame == 2)   //выигрыш
+        if (typeEndGame == 2)   //выигрыш
         {
             panelWin.SetActive(true);
 
-            if (SceneSwitching.minesCount == 10)
+            if ((!PlayerPrefs.HasKey("SimpleRecord") || PlayerPrefs.GetFloat("SimpleRecord") > time) && SceneSwitching.minesCount == 10)
             {
-                PlayerPrefs.SetString("SimpleRecord", time.ToString("F2"));
+                PlayerPrefs.SetFloat("SimpleRecord", time);
             }
-            else if (SceneSwitching.minesCount == 35)
+            else if ((!PlayerPrefs.HasKey("NormalRecord") || PlayerPrefs.GetFloat("NormalRecord") > time) && SceneSwitching.minesCount == 35)
             {
-                PlayerPrefs.SetString("NormalRecord", time.ToString("F2"));
+                PlayerPrefs.SetFloat("NormalRecord", time);
             }
-            else if (SceneSwitching.minesCount == 50)
+            else if ((!PlayerPrefs.HasKey("HardRecord") || PlayerPrefs.GetFloat("HardRecord") > time) && SceneSwitching.minesCount == 40)
             {
-                PlayerPrefs.SetString("HardRecord", time.ToString("F2"));
+                PlayerPrefs.SetFloat("HardRecord", time);
             }
         }
 
-        else if (endGame == 1)  //проигрыш
+        else if (typeEndGame == 1)  //проигрыш
         {
             for (int i = 0; i < xCount; i++)
             {

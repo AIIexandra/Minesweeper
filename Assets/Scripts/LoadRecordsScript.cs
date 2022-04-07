@@ -11,19 +11,24 @@ public class LoadRecordsScript : MonoBehaviour
 
     void Start()
     {
+
+    }
+
+    private void Update()
+    {
         if (PlayerPrefs.HasKey("SimpleRecord"))
         {
-            textSimpleRecord.text = PlayerPrefs.GetString("SimpleRecord") + " сек";
+            textSimpleRecord.text = PlayerPrefs.GetFloat("SimpleRecord").ToString("F2") + " сек";
         }
 
         if (PlayerPrefs.HasKey("NormalRecord"))
         {
-            textSimpleRecord.text = PlayerPrefs.GetString("NormalRecord") + " сек";
+            textSimpleRecord.text = PlayerPrefs.GetFloat("NormalRecord").ToString("F2") + " сек";
         }
 
         if (PlayerPrefs.HasKey("HardRecord"))
         {
-            textSimpleRecord.text = PlayerPrefs.GetString("HardRecord") + " сек";
+            textSimpleRecord.text = PlayerPrefs.GetFloat("HardRecord").ToString("F2") + " сек";
         }
     }
 }

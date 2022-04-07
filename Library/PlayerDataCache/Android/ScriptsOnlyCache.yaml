@@ -814,8 +814,8 @@ ScriptsOnlyBuild:
   platform: 13
   scenePathNames:
   - Assets/Scenes/MenuScene.unity
-  - Assets/Scenes/RecordsScene.unity
-  - Assets/Scenes/GameScene.unity
-  - Assets/Scenes/RulesScene.unity
   - Assets/Scenes/SelectLevelScene.unity
+  - Assets/Scenes/GameScene.unity
+  - Assets/Scenes/RecordsScene.unity
+  - Assets/Scenes/RulesScene.unity
   playerPath: G:/Ready made games/MinesWeeper.apk
